@@ -10,7 +10,7 @@ export default function RecentTasks({ tasks, projectId, updateTaskStatus, delete
      className="mt-4 space-y-2 flex-1">
   <h4 className="font-semibold text-sky-700">Recent Tasks:</h4>
       {tasks.slice(0, 3).map((task) => (
-        <div key={task.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-sky-50 p-2 rounded-lg gap-2">
+        <div key={task._id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-sky-50 p-2 rounded-lg gap-2">
           <div className="flex-1 min-w-0">
             <span className="text-sm font-medium truncate block" title={task.name}>{task.name}</span>
             <div 
@@ -29,7 +29,7 @@ export default function RecentTasks({ tasks, projectId, updateTaskStatus, delete
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => updateTaskStatus(projectId, task.id, task.status === 'pending' ? 'completed' : 'pending')}
+              onClick={() => updateTaskStatus(projectId, task._id, task.status === 'pending' ? 'completed' : 'pending')}
               className={`${task.status === 'completed' ? 'text-green-600' : 'text-gray-400'} hover:text-green-800 p-1`}
               title={task.status === 'completed' ? 'Mark as pending' : 'Mark as completed'}
             >
@@ -38,7 +38,7 @@ export default function RecentTasks({ tasks, projectId, updateTaskStatus, delete
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => deleteTask(projectId, task.id)}
+              onClick={() => deleteTask(projectId, task._id)}
               className="text-red-400 hover:text-red-600 p-1"
               title="Delete task"
             >

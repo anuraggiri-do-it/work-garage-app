@@ -27,7 +27,7 @@ function ProjectCard({ project, onDelete }) {
       </div>
       <div className="flex justify-end sm:justify-center flex-shrink-0">
         <Button
-          onClick={() => onDelete(project.id)}
+          onClick={() => onDelete(project._id)}
           variant="danger"
           size="sm"
           className="p-2 rounded-full"
@@ -47,7 +47,7 @@ export default function ProjectList({ projects, onDelete }) {
   return (
     <div className="grid gap-4 auto-rows-fr">
       {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} onDelete={onDelete} />
+        <ProjectCard key={project._id} project={project} onDelete={onDelete} />
       ))}
     </div>
   );

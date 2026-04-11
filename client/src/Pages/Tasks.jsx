@@ -6,58 +6,43 @@ import Card from "../Components/UI/Card";
 import Input from "../Components/UI/Input";
 import Button from "../Components/UI/Button";
 
-
 export default function Tasks() {
-  const { projects, addTaskToProject, updateTaskStatus, deleteTask: deleteProjectTask } = useOutletContext();
-  
+  const { projects, addTaskToProject, updateTaskStatus, deleteTask } = useOutletContext();
+
   const [name, setName] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [selectedProject, setSelectedProject] = useState("");
   const [priority, setPriority] = useState("medium");
-  
+
   useEffect(() => {
     if (projects.length > 0 && !selectedProject) {
-      setSelectedProject(projects[0].id.toString());
+      setSelectedProject(projects[0]._id);
     }
   }, [projects, selectedProject]);
 
-  const allTasks = projects.flatMap(project => 
-    (project.tasks || []).map(task => ({
+  const allTasks = projects.flatMap((project) =>
+    (project.tasks || []).map((task) => ({
       ...task,
-      projectId: project.id,
-      projectName: project.name
+      projectId: project._id,
+      projectName: project.name,
     }))
   );
 
-  const handleAddTask = (e) => {
+  const handleAddTask = async (e) => {
     e.preventDefault();
     if (!name.trim() || !selectedProject) return;
-
-    const newTask = {
+    await addTaskToProject(selectedProject, {
       name: name.trim(),
       assignedTo: assignedTo.trim() || "Unassigned",
       dueDate: dueDate || "No date",
       priority,
       status: "pending",
-      createdAt: new Date().toISOString()
-    };
-
-    addTaskToProject(Number(selectedProject), newTask);
-    
+    });
     setName("");
     setAssignedTo("");
     setDueDate("");
     setPriority("medium");
-  };
-
-  const handleToggleStatus = (projectId, taskId, currentStatus) => {
-    const newStatus = currentStatus === "pending" ? "completed" : "pending";
-    updateTaskStatus(projectId, taskId, newStatus);
-  };
-
-  const handleDeleteTask = (projectId, taskId) => {
-    deleteProjectTask(projectId, taskId);
   };
 
   const getPriorityColor = (priority) => {
@@ -71,11 +56,7 @@ export default function Tasks() {
 
   return (
     <div className="p-4 lg:p-6 bg-gradient-to-br from-sky-50 to-white min-h-screen">
-      <PageHeader 
-        title="Task Management" 
-        icon={ListTodo}
-        subtitle="Create and manage tasks across your projects"
-      />
+      <PageHeader title="Task Management" icon={ListTodo} subtitle="Create and manage tasks across your projects" />
 
       {projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-64 text-center py-12">
@@ -89,25 +70,9 @@ export default function Tasks() {
             <h3 className="text-xl font-semibold text-sky-800 mb-4">Add New Task</h3>
             <form onSubmit={handleAddTask} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Input
-                  label="Task Name"
-                  placeholder="Enter task name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-                <Input
-                  label="Assign To"
-                  placeholder="Assign to"
-                  value={assignedTo}
-                  onChange={(e) => setAssignedTo(e.target.value)}
-                />
-                <Input
-                  label="Due Date"
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
+                <Input label="Task Name" placeholder="Enter task name" value={name} onChange={(e) => setName(e.target.value)} required />
+                <Input label="Assign To" placeholder="Assign to" value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} />
+                <Input label="Due Date" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
                 <div>
                   <label className="block text-sky-700 font-medium mb-2">Project</label>
                   <select
@@ -118,9 +83,7 @@ export default function Tasks() {
                   >
                     <option value="">Select a project</option>
                     {projects.map((project) => (
-                      <option key={project.id} value={project.id}>
-                        {project.name}
-                      </option>
+                      <option key={project._id} value={project._id}>{project.name}</option>
                     ))}
                   </select>
                 </div>
@@ -137,12 +100,7 @@ export default function Tasks() {
                   </select>
                 </div>
               </div>
-              <Button
-                type="submit"
-                disabled={!name.trim() || !selectedProject}
-              >
-                Add Task
-              </Button>
+              <Button type="submit" disabled={!name.trim() || !selectedProject}>Add Task</Button>
             </form>
           </Card>
 
@@ -151,15 +109,12 @@ export default function Tasks() {
               <ListTodo size={24} className="text-sky-500" />
               All Tasks ({allTasks.length})
             </h3>
-            
             {allTasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center min-h-32 text-center py-8">
-                <p className="text-gray-500 text-lg">No tasks yet. Start by adding one!</p>
-              </div>
+              <p className="text-gray-500 text-lg text-center py-8">No tasks yet. Start by adding one!</p>
             ) : (
-              <div className="grid gap-4 auto-rows-fr">
+              <div className="grid gap-4">
                 {allTasks.map((task) => (
-                  <Card key={`${task.projectId}-${task.id}`} hover>
+                  <Card key={`${task.projectId}-${task._id}`} hover>
                     <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-3 gap-3">
                       <div className="flex-1 min-w-0">
                         <h4 className="text-lg font-semibold text-sky-800 mb-1 truncate">{task.name}</h4>
@@ -167,32 +122,26 @@ export default function Tasks() {
                         <div className="flex flex-wrap gap-2 text-sm">
                           <span className="text-sky-600">Assigned: {task.assignedTo}</span>
                           <span className="text-sky-600">Due: {task.dueDate}</span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}> 
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
                             {task.priority} priority
                           </span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            task.status === "completed" 
-                              ? "text-green-700 bg-green-100" 
-                              : "text-yellow-700 bg-yellow-100"
-                          }`}>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${task.status === "completed" ? "text-green-700 bg-green-100" : "text-yellow-700 bg-yellow-100"}`}>
                             {task.status}
                           </span>
                         </div>
                       </div>
                       <div className="flex gap-2 lg:ml-4 flex-shrink-0">
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleToggleStatus(task.projectId, task.id, task.status)}
+                          variant="ghost" size="sm"
+                          onClick={() => updateTaskStatus(task.projectId, task._id, task.status === "pending" ? "completed" : "pending")}
                           className="p-2 text-sky-600 hover:text-sky-800 hover:bg-sky-50"
                           title={task.status === "completed" ? "Mark as pending" : "Mark as completed"}
                         >
                           <CheckCircle size={20} />
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteTask(task.projectId, task.id)}
+                          variant="ghost" size="sm"
+                          onClick={() => deleteTask(task.projectId, task._id)}
                           className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50"
                           title="Delete task"
                         >
