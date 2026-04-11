@@ -9,13 +9,7 @@ connectDB();
 
 const app = express();
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:5175',
-  process.env.CLIENT_URL,
-].filter(Boolean);
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/projects', projectRoutes);
