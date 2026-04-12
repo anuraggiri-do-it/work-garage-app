@@ -84,7 +84,7 @@ function Layout() {
   };
 
   return (
-    <div className={`min-h-screen w-full flex flex-col lg:flex-row ${theme === "dark" ? "bg-slate-900" : "bg-gray-100"}`}>
+    <div className={`h-screen w-full flex overflow-hidden ${theme === "dark" ? "bg-slate-900" : "bg-gray-100"}`}>
       <button
         className="lg:hidden fixed top-4 left-4 z-50 bg-sky-600 text-white rounded-full p-2 shadow-lg focus:outline-none"
         onClick={() => setSidebarOpen((o) => !o)}
@@ -97,12 +97,12 @@ function Layout() {
         </svg>
       </button>
 
+      {/* Fixed Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed lg:static top-0 left-0 h-full w-64 z-40 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        className={`fixed top-0 left-0 h-screen w-64 z-40 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 lg:relative lg:flex-shrink-0`}
         style={{
           background: theme === "dark" ? "linear-gradient(to bottom right, #1e293b, #334155)" : "linear-gradient(to bottom right, #e0f2fe, #f0f9ff)",
-          minHeight: "100vh",
           borderRight: theme === "dark" ? "1px solid #334155" : "1px solid #bae6fd",
         }}
       >
@@ -118,7 +118,8 @@ function Layout() {
         />
       </div>
 
-      <main className="flex-1 p-4 lg:p-8 overflow-auto" style={{ minHeight: "100vh" }}>
+      {/* Scrollable Main Content */}
+      <main className="flex-1 overflow-y-auto h-screen">
         <Outlet
           context={{
             projects,

@@ -9,7 +9,7 @@ import ToggleButton from "./UI/ToggleButton";
 
 export default function Sidebar({ theme, profile, navItems, onToggleTheme }) {
   return (
-    <aside className={`w-full lg:w-64 lg:min-w-64 ${theme === 'dark' ? 'bg-gradient-to-br from-slate-800 to-slate-700' : 'bg-gradient-to-br from-blue-100 to-blue-50'} border-r rounded-xl ${theme === 'dark' ? 'border-slate-600' : 'border-gray-300'} shadow-lg p-4 lg:p-6 flex flex-col justify-between`} style={{ minHeight: '100vh', maxHeight: '100vh', overflowY: 'auto' }}>
+    <aside className={`w-64 h-screen flex flex-col justify-between ${theme === 'dark' ? 'bg-gradient-to-br from-slate-800 to-slate-700' : 'bg-gradient-to-br from-blue-100 to-blue-50'} p-4 lg:p-6`}>
       {/* Top: App name + Navigation */}
       <div>
         <h1 className={`text-2xl font-bold ${theme === 'dark' ? 'text-blue-200' : 'text-blue-800'} mb-8`}>
